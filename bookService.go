@@ -1,54 +1,37 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 )
 
 type BookService struct {
-	r BookReposhitory
+	r *BookReposistory
 }
 
-func (bs BookService) registerNewBook(b Book) {
+func NewBookService(repo *BookReposistory) *BookService {
+	return &BookService{r: repo}
+}
+
+func (bs *BookService) registerNewBook(b *Book) {
 	bs.r.AddMewBook(b)
-
 }
 
-func (bs BookService) printAllBookCollection() {
-	collection := bs.r.FindAllBook()
-	for _, books := range collection {
-		bs.printConsole("koleksibuku" collection)
-	}
+func (bs *BookService) getAllBookNewBook() []*Book {
+	return bs.r.FindAllBook()
 }
 
-func (bs BookService) searchBookId(id string) {
+func (bs *BookService) searchBookId(id string) []*Book {
 	var funcFinlter = func(b Book) bool {
-		if b.Id == id {
-			return true
-		}
-		return true
-
+		return b.Id == id
 	}
-	result := bs.r.FindBookField(funcFinlter)
-	bs.printConsole(fmt.Sprintf("Hasil Pencarian Buku dengan ID : %s", id), result)
+	return bs.r.FindBookField(funcFinlter)
 
 }
 
-func (bs BookService) searchBookByTitle(title string) {
+func (bs *BookService) searchBookByTitle(title string) []*Book {
 	var funcFinlter = func(b Book) bool {
-		return strings.Contains(b.Titile, title)
+		return strings.Contains(b.Title, title)
 	}
-	result := bs.r.FindBookField(funcFinlter)
-	bs.printConsole(fmt.Sprintf("Hasil pencarian Buku dengan kata kunci : %s", title), result)
-}
+	return bs.r.FindBookField(funcFinlter)
 
-func (bs BookService) printConsole(header string, books []Book) {
-	fmt.Println("")
-	fmt.Println(header)
-	fmt.Printf("%s\n", strings.Repeat("=", 80))
-	fmt.Printf("%-10s%-30s%-15s%-15s%10s\n", "ID", "Title", "Author", "Genre", "Price")
-	fmt.Printf("%s\n", strings.Repeat("-", 80))
-	for _, b := range books {
-		fmt.Printf("%-10s%-30s%-15s%-15s%.2f\n", b.Id, b.Titile, b.Author, b.Genre, b.Price)
-	}
 }
